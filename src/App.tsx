@@ -1,12 +1,13 @@
-import { Typography } from "@mui/material";
+import { Main } from "./pages";
+import { BaseLayout } from "./shared/layout";
 
 const App = () => {
 
-  return (
-    <div>
-        <Typography variant="h4">Hello World!</Typography>
-    </div>
-  )
-}
+    return (
+        <BaseLayout>
+            <Main/>
+        </BaseLayout>
+    );
+};
 
 export default App;
