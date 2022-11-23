@@ -1,11 +1,14 @@
-import { Main } from "./pages";
+import { BrowserRouter } from "react-router-dom";
+import { AppRoutes } from "./routes";
 import { BaseLayout } from "./shared/layout";
 
 const App = () => {
 
     return (
         <BaseLayout>
-            <Main/>
+            <BrowserRouter>
+                <AppRoutes />
+            </BrowserRouter>
         </BaseLayout>
     );
 };
