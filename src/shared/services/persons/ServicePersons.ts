@@ -1,4 +1,5 @@
 import { AxiosResponse } from "axios";
+import { format } from "date-fns";
 import { api } from "../api";
 
 export interface IPerson {
@@ -10,7 +11,8 @@ export interface IPerson {
     dateBirth: string,
     phone: string,
     address: string,
-    nationality:string
+    nationality:string,
+    url?:string,
 }
 
 const modifyData = ({ data }: AxiosResponse):IPerson[] => {
@@ -25,7 +27,7 @@ const modifyData = ({ data }: AxiosResponse):IPerson[] => {
             phone: p.cell,
             address: `${p.location.street.name}, ${p.location.street.number}, ${p.location.city}, ${p.location.state}, ${p.location.country}`,
             nationality: p.nat,
-            dateBirth: p.dob.date,
+            dateBirth: format(new Date(p.dob.date), "dd/MM/yyyy"),
             image: p.picture,
         }];
     });
@@ -34,9 +36,13 @@ const modifyData = ({ data }: AxiosResponse):IPerson[] => {
 
 };
 
-const getAll = async (page: number, limit = 10, filter = ""): Promise<IPerson[] | Error> => {
+const getAll = async (page: number,filter = "", limit = 10): Promise<IPerson[] | Error> => {
     try {
-        const urlRelative = `/?page=${page}&results=${limit}`;
+        let urlRelative = "";
+
+        urlRelative = `/?page=${page}&results=${limit}`;
+
+        console.log(urlRelative);
 
         const response = await api.get<IPerson[]>(urlRelative);
         if(response){
@@ -49,7 +55,6 @@ const getAll = async (page: number, limit = 10, filter = ""): Promise<IPerson[] 
         return error as Error;
     }
 };
-
 
 export const ServicePersons = {
     getAll
