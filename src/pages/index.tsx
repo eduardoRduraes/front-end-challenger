@@ -9,6 +9,7 @@ import { IPerson, ServicePersons } from "../shared/services/persons/ServicePerso
 
 export const Main = () => {
     const [rows, setRows]= useState<IPerson[]>([]);
+    const [seed, setSeed] = useState<string>("");
     const [person, setPerson]= useState<IPerson>({} as IPerson);
     const[searchParams, setSearchParams] = useSearchParams();
     const [open,setOpen] = useState<boolean>(false);
@@ -25,19 +26,24 @@ export const Main = () => {
 
 
     useEffect(() => {
+        setRows([]);
         debounce(async () => {
-            const response = await ServicePersons.getAll(page, filter.toLocaleUpperCase());
+            const response = await ServicePersons.getAll({page, seed, filter});
             if(response instanceof Error){
-                throw new Error(response.message);
+                const error = new Error(response.message);
+                console.log(error);
+                alert("error ao buscar informações");
+                return;
             }
-            if(response.length === 0){
+            if(response.persons.length === 0){
                 setRows([]);
                 return;
             }
-            setRows(response);
+            setRows(response.persons);
+            setSeed(response.info.seed);
         });
+    },[page, filter]);
 
-    },[filter,page]);
 
     const handleOpen = useCallback((person:IPerson) => {
         setPerson(person);
@@ -68,7 +74,7 @@ export const Main = () => {
                 }
 
                 <Box sx={{display:"flex",justifyContent:"flex-end", alignItems:"center", width:900}}>
-                    <TextField variant="outlined"  placeholder="Searching" onChange={(e) => {setSearchParams({filter: e.target.value, page:"1"},{replace:true});}} fullWidth/>
+                    <TextField variant="outlined"  placeholder="Searching" onChange={(e) => {setSearchParams({filter: e.target.value, page: "1"},{replace:true});}} fullWidth/>
                     <Icon sx={{position:"absolute", paddingRight:4}}>person_search</Icon>
                 </Box>
 
